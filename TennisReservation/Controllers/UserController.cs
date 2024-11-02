@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TennisReservation.Models;
 using TennisReservation.Services;
+using TennisReservation.Services.Authentication;
 
 namespace TennisReservation.Controllers
 {
@@ -9,10 +10,12 @@ namespace TennisReservation.Controllers
     public class UserController: ControllerBase
     {
         private readonly IUserService _userService;
+        private readonly ITokenService _tokenService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService,ITokenService tokenService)
         {
             _userService = userService;
+            _tokenService = tokenService;
         }
 
         [HttpPost("register")]
@@ -40,7 +43,8 @@ namespace TennisReservation.Controllers
             var user = await _userService.LoginUserAsync(request);
             if (user == null)
                 return Unauthorized("Invalid credentials.");
-            return Ok("Login successful");
+            var token = _tokenService.GenerateJwtToken(user);
+            return Ok(new { Token = token });
         }
     }
 }

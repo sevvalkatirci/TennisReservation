@@ -5,11 +5,34 @@ using FluentValidation;
 using TennisReservation.Validation;
 using FluentValidation.AspNetCore;
 using System.Globalization;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using TennisReservation.Services.Authentication;
 
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+})
+.AddJwtBearer(options =>
+{
+    options.TokenValidationParameters = new TokenValidationParameters
+    {
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = builder.Configuration["Jwt:Issuer"],
+        ValidAudience = builder.Configuration["Jwt:Audience"],
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+    };
+});
 
+builder.Services.AddAuthorization();
 builder.Services.AddControllers();
 // Register FluentValidation and scan the assembly for validators
 builder.Services.AddValidatorsFromAssemblyContaining<RegisterRequestValidator>();
@@ -26,6 +49,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 
 
 builder.Services.AddScoped<IUserService,UserService>();
+builder.Services.AddScoped<ITokenService,TokenService>();
 
 var app = builder.Build();
 
