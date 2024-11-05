@@ -50,6 +50,10 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectio
 
 builder.Services.AddScoped<IUserService,UserService>();
 builder.Services.AddScoped<ITokenService,TokenService>();
+builder.Services.AddScoped<ICourtService, CourtService>();
+builder.Services.AddScoped<ITrainerService, TrainerService>();
+builder.Services.AddScoped<IReservationService, ReservationService>();
+
 
 var app = builder.Build();
 

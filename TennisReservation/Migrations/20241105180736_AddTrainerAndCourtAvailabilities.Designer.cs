@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TennisReservation.Data;
 
@@ -11,9 +12,11 @@ using TennisReservation.Data;
 namespace TennisReservation.Migrations
 {
     [DbContext(typeof(TennisReservationContext))]
-    partial class TennisReservationContextModelSnapshot : ModelSnapshot
+    [Migration("20241105180736_AddTrainerAndCourtAvailabilities")]
+    partial class AddTrainerAndCourtAvailabilities
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,43 +93,6 @@ namespace TennisReservation.Migrations
                     b.HasIndex("CourtId");
 
                     b.ToTable("CourtAvailabilities");
-                });
-
-            modelBuilder.Entity("TennisReservation.Models.Reservation", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("CourtId")
-                        .HasColumnType("int");
-
-                    b.Property<TimeSpan>("EndTime")
-                        .HasColumnType("time");
-
-                    b.Property<DateTime>("ReservationDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<TimeSpan>("StartTime")
-                        .HasColumnType("time");
-
-                    b.Property<int>("TrainerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CourtId");
-
-                    b.HasIndex("TrainerId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("Reservations");
                 });
 
             modelBuilder.Entity("TennisReservation.Models.Trainer", b =>
@@ -251,33 +217,6 @@ namespace TennisReservation.Migrations
                         .IsRequired();
 
                     b.Navigation("Court");
-                });
-
-            modelBuilder.Entity("TennisReservation.Models.Reservation", b =>
-                {
-                    b.HasOne("TennisReservation.Models.Court", "Court")
-                        .WithMany()
-                        .HasForeignKey("CourtId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TennisReservation.Models.Trainer", "Trainer")
-                        .WithMany()
-                        .HasForeignKey("TrainerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TennisReservation.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Court");
-
-                    b.Navigation("Trainer");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("TennisReservation.Models.TrainerAvailability", b =>
